@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.meic.sec;
 
+import pt.ulisboa.tecnico.meic.sec.exception.InvalidAESKeySizeException;
+import pt.ulisboa.tecnico.meic.sec.exception.NotEnoughNumberOfBytesException;
+
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
@@ -13,7 +16,7 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 /**
  * Created by francisco on 04/03/2017.
  */
-public class Utils {
+public class CryptoManager {
 
     private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";
     private static final String DIGEST_ALGORITHM = "SHA-256";
@@ -23,12 +26,8 @@ public class Utils {
 
     private ArrayList<String> oldTimestamps;
 
-    public Utils() {
+    public CryptoManager() {
         this.oldTimestamps = new ArrayList<String>();
-    }
-
-    public static void main(String[] args){
-        System.out.println("HelloWorld!");
     }
 
     /**
@@ -167,7 +166,7 @@ public class Utils {
             keyGen.init(bits);
             return keyGen.generateKey();
         } else {
-            throw new InvalidAESKeySize(bits);
+            throw new InvalidAESKeySizeException(bits);
         }
     }
 

@@ -1,12 +1,12 @@
-package pt.ulisboa.tecnico.meic.sec;
+package pt.ulisboa.tecnico.meic.sec.exception;
 
 /**
  * Created by francisco on 04/03/2017.
  */
-public class InvalidAESKeySize extends RuntimeException {
+public class InvalidAESKeySizeException extends CryptoException {
     private int bits = -1;
 
-    InvalidAESKeySize(int bits) {
+    public InvalidAESKeySizeException(int bits) {
         this.bits = bits;
     }
 
