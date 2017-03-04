@@ -1,7 +1,10 @@
 package pt.ulisboa.tecnico.meic.sec;
 
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
@@ -15,6 +18,8 @@ public class Utils {
     private static final String SHA_1_PRNG = "SHA1PRNG";
     private static final String SHA_256 = "SHA-256";
     private static final String SHA_256_WITH_RSA = "SHA256WithRSA";
+    private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
+    private static final long MINUTE_MS = 60 * 1000;
 
     public static void main(String[] args){
         System.out.println("HelloWorld!");
@@ -98,5 +103,76 @@ public class Utils {
         return sig.sign();
     }
 
+    /**
+     * It encrypts/decrypts using AES-CBC bytesToEncrypt using aesKey.
+     * It will return the ciphered or the plain text
+     * If aesKey has not the proper Padding (PKCS5Padding) an exception will be thrown.
+     * @param bytesToEncrypt
+     * @param aesKey
+     * @param iv
+     * @return byte[]
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidAlgorithmParameterException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws IllegalBlockSizeException
+     */
+    public static byte[] runAES(byte[] bytesToEncrypt, Key aesKey, byte[] iv)
+            throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
+            InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        // get a AES cipher object and print the provider
+        Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
+        IvParameterSpec ips = new IvParameterSpec(iv);
+        cipher.init(Cipher.ENCRYPT_MODE, aesKey, ips);
+        return cipher.doFinal(bytesToEncrypt);
+    }
+
+    /**
+     * Returns an IV using secure random
+     * @param bytes
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public static byte[] generateIV(int bytes) throws NoSuchAlgorithmException {
+        return getSecureRandomNumber(bytes);
+    }
+
+    /**
+     * It generates a AES key with the given number of bits
+     * @param bits
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public static Key generateAESKey(int bits) throws NoSuchAlgorithmException {
+        if(bits == 128 || bits == 192 || bits == 256){
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(bits);
+            return keyGen.generateKey();
+        } else {
+            throw new InvalidAESKeySize(bits);
+        }
+    }
+
+    public boolean isTimestampAndNonceValid(Timestamp date, String nonce) {
+        Timestamp actualTime = getActualTimestamp();
+
+        long actualTimeMs = actualTime.getTime();
+        long msgTimeMs = date.getTime();
+
+        if(Math.abs(actualTimeMs - msgTimeMs) < MINUTE_MS) {
+            if (oldTimestamps.size() != 0) {
+                if (oldTimestamps.contains(date.toString() + nonce)) {
+                    return false;
+                }
+            }
+            oldTimestamps.add(date.toString() + nonce);
+        }else {
+            return false;
+        }
+        return true;
+    }
+
+    private static ArrayList<String> oldTimestamps = new ArrayList<String>();
 }
