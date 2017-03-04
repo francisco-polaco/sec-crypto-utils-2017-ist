@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.meic.sec;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.sql.Timestamp;
 import java.util.GregorianCalendar;
 
@@ -16,6 +14,7 @@ public class Utils {
 
     private static final String SHA_1_PRNG = "SHA1PRNG";
     private static final String SHA_256 = "SHA-256";
+    private static final String SHA_256_WITH_RSA = "SHA256WithRSA";
 
     public static void main(String[] args){
         System.out.println("HelloWorld!");
@@ -68,6 +67,7 @@ public class Utils {
 
     /**
      *  It returns SHA-2 digest of the given byte[]
+     *  Don't use this method if you are going to use makeDigitalSignature next.
      *  Don't forget SHA-2 is still secure :D
      * @param toBeDigested - bytes to be digested
      * @return byte[] SHA-2 of toBeDigested
@@ -78,4 +78,25 @@ public class Utils {
         messageDigest.update(toBeDigested);
         return messageDigest.digest();
     }
+
+    /**
+     * It digests the message and signs that digest.
+     * This method does everything, so you don't need to use digest method before.
+     * @param bytesToSign
+     * @param keyPair
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
+    public static byte[] makeDigitalSignature(byte[] bytesToSign, KeyPair keyPair)
+            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        // Digest with SHA256 and sign that digest
+        Signature sig = Signature.getInstance(SHA_256_WITH_RSA);
+        sig.initSign(keyPair.getPrivate());
+        sig.update(bytesToSign);
+        return sig.sign();
+    }
+
+
 }
