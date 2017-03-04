@@ -15,11 +15,17 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
  */
 public class Utils {
 
-    private static final String SHA_1_PRNG = "SHA1PRNG";
-    private static final String SHA_256 = "SHA-256";
-    private static final String SHA_256_WITH_RSA = "SHA256WithRSA";
+    private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";
+    private static final String DIGEST_ALGORITHM = "SHA-256";
+    private static final String SIGNATURE_WITH_DIGEST_ALGORITHM = "SHA256WithRSA";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
-    private static final long MINUTE_MS = 60 * 1000;
+    private static final long TIME_INTERVAL_VALID_REQUEST_MS = 60 * 1000; // 1 MINUTE
+
+    private ArrayList<String> oldTimestamps;
+
+    public Utils() {
+        this.oldTimestamps = new ArrayList<String>();
+    }
 
     public static void main(String[] args){
         System.out.println("HelloWorld!");
@@ -27,7 +33,7 @@ public class Utils {
 
     /**
      * It returns a byte array with the size given filled with a secure
-     * based on SHA1 random stuff. Great to be used as a Nouce.
+     * based on SHA1 random stuff.
      * Note that if you want a array with less then 16 bytes, you probably don't
      * know what you are doing.
      *
@@ -35,19 +41,29 @@ public class Utils {
      * @return randomBytes - byte[] with random suff
      * @throws NoSuchAlgorithmException
      */
-    public static byte[] getSecureRandomNumber(int byteNumber) throws NoSuchAlgorithmException {
+    private byte[] getSecureRandomNumber(int byteNumber) throws NoSuchAlgorithmException {
         if(byteNumber < 16) throw new NotEnoughNumberOfBytesException(); // 16 bytes = 128 bits
         byte[] randomBytes = new byte[byteNumber];
-        SecureRandom secureRandom = SecureRandom.getInstance(SHA_1_PRNG);
+        SecureRandom secureRandom = SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
         secureRandom.nextBytes(randomBytes);
         return randomBytes;
+    }
+
+    /**
+     * It gets a nounce, not much to explain.
+     * @param bytes
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public byte[] generateNounce(int bytes) throws NoSuchAlgorithmException {
+        return getSecureRandomNumber(bytes);
     }
 
     /**
      * It returns the actual clock and date (obvious) as a Timestamp.
      * @return actualTimestamp
      */
-    public static Timestamp getActualTimestamp(){
+    public Timestamp getActualTimestamp(){
         GregorianCalendar rightNow = new GregorianCalendar();
         return new Timestamp(rightNow.getTimeInMillis());
     }
@@ -57,7 +73,7 @@ public class Utils {
      * @param binary - binary to be converted
      * @return String
      */
-    public static String convertBinaryToBase64(byte[] binary){
+    public String convertBinaryToBase64(byte[] binary){
         return printBase64Binary(binary);
     }
 
@@ -66,7 +82,7 @@ public class Utils {
      * @param text - base64 to be converted
      * @return byte[]
      */
-    public static byte[] convertBase64ToBinary(String text){
+    public byte[] convertBase64ToBinary(String text){
         return parseBase64Binary(text);
     }
 
@@ -78,8 +94,8 @@ public class Utils {
      * @return byte[] SHA-2 of toBeDigested
      * @throws NoSuchAlgorithmException
      */
-    public static byte[] digest(byte[] toBeDigested) throws NoSuchAlgorithmException {
-        MessageDigest messageDigest = MessageDigest.getInstance(SHA_256);
+    public byte[] digest(byte[] toBeDigested) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance(DIGEST_ALGORITHM);
         messageDigest.update(toBeDigested);
         return messageDigest.digest();
     }
@@ -94,10 +110,10 @@ public class Utils {
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    public static byte[] makeDigitalSignature(byte[] bytesToSign, KeyPair keyPair)
+    public byte[] makeDigitalSignature(byte[] bytesToSign, KeyPair keyPair)
             throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         // Digest with SHA256 and sign that digest
-        Signature sig = Signature.getInstance(SHA_256_WITH_RSA);
+        Signature sig = Signature.getInstance(SIGNATURE_WITH_DIGEST_ALGORITHM);
         sig.initSign(keyPair.getPrivate());
         sig.update(bytesToSign);
         return sig.sign();
@@ -118,7 +134,7 @@ public class Utils {
      * @throws BadPaddingException
      * @throws IllegalBlockSizeException
      */
-    public static byte[] runAES(byte[] bytesToEncrypt, Key aesKey, byte[] iv)
+    public byte[] runAES(byte[] bytesToEncrypt, Key aesKey, byte[] iv)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         // get a AES cipher object and print the provider
@@ -135,7 +151,7 @@ public class Utils {
      * @return
      * @throws NoSuchAlgorithmException
      */
-    public static byte[] generateIV(int bytes) throws NoSuchAlgorithmException {
+    public byte[] generateIV(int bytes) throws NoSuchAlgorithmException {
         return getSecureRandomNumber(bytes);
     }
 
@@ -145,7 +161,7 @@ public class Utils {
      * @return
      * @throws NoSuchAlgorithmException
      */
-    public static Key generateAESKey(int bits) throws NoSuchAlgorithmException {
+    public Key generateAESKey(int bits) throws NoSuchAlgorithmException {
         if(bits == 128 || bits == 192 || bits == 256){
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
             keyGen.init(bits);
@@ -155,13 +171,20 @@ public class Utils {
         }
     }
 
+    /**
+     * It will check if the Timestamp is fresh (if it was created within TIME_INTERVAL_VALID_REQUEST_MS
+     * from the actual time) and if the pair Timestamp,Nounce was already seen.
+     * @param date
+     * @param nonce
+     * @return boolean true if its valid, false if it isn't
+     */
     public boolean isTimestampAndNonceValid(Timestamp date, String nonce) {
         Timestamp actualTime = getActualTimestamp();
 
         long actualTimeMs = actualTime.getTime();
         long msgTimeMs = date.getTime();
 
-        if(Math.abs(actualTimeMs - msgTimeMs) < MINUTE_MS) {
+        if(Math.abs(actualTimeMs - msgTimeMs) < TIME_INTERVAL_VALID_REQUEST_MS) {
             if (oldTimestamps.size() != 0) {
                 if (oldTimestamps.contains(date.toString() + nonce)) {
                     return false;
@@ -174,5 +197,4 @@ public class Utils {
         return true;
     }
 
-    private static ArrayList<String> oldTimestamps = new ArrayList<String>();
 }
