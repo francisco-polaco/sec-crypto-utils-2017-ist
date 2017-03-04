@@ -100,7 +100,7 @@ public class CryptoManager {
     }
 
     /**
-     * It digests the message and signs that digest.
+     * It digests the message and signs that digest with senders private key.
      * This method does everything, so you don't need to use digest method before.
      * @param bytesToSign
      * @param keyPair
@@ -116,6 +116,31 @@ public class CryptoManager {
         sig.initSign(keyPair.getPrivate());
         sig.update(bytesToSign);
         return sig.sign();
+    }
+
+    /**
+     * Checks if the signedDigest was indeed the digest from the message sign with senders private key.
+     * Ofc we are checking with a public key :D We are not hackers :D
+     * @param signedDigest
+     * @param bytesToBeVerified
+     * @param publicKey
+     * @return boolean - true if it's authentic, false if it isn't
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
+    public static boolean verifyDigitalSignature(byte[] signedDigest, byte[] bytesToBeVerified, PublicKey publicKey)
+            throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        // verify the signature with the public key
+        Signature sig = Signature.getInstance(SIGNATURE_WITH_DIGEST_ALGORITHM);
+        sig.initVerify(publicKey);
+        sig.update(bytesToBeVerified);
+        try {
+            return sig.verify(signedDigest);
+        } catch (SignatureException se) {
+            System.err.println("Caught exception while verifying " + se);
+            return false;
+        }
     }
 
     /**
