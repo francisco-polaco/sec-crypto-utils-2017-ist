@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.meic.sec;
 
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
@@ -14,6 +15,7 @@ import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 public class Utils {
 
     private static final String SHA_1_PRNG = "SHA1PRNG";
+    private static final String SHA_256 = "SHA-256";
 
     public static void main(String[] args){
         System.out.println("HelloWorld!");
@@ -51,7 +53,7 @@ public class Utils {
      * @param binary - binary to be converted
      * @return String
      */
-    private static String convertBinaryToBase64(byte[] binary){
+    public static String convertBinaryToBase64(byte[] binary){
         return printBase64Binary(binary);
     }
 
@@ -60,7 +62,20 @@ public class Utils {
      * @param text - base64 to be converted
      * @return byte[]
      */
-    private static byte[] convertBase64ToBinary(String text){
+    public static byte[] convertBase64ToBinary(String text){
         return parseBase64Binary(text);
+    }
+
+    /**
+     *  It returns SHA-2 digest of the given byte[]
+     *  Don't forget SHA-2 is still secure :D
+     * @param toBeDigested - bytes to be digested
+     * @return byte[] SHA-2 of toBeDigested
+     * @throws NoSuchAlgorithmException
+     */
+    public static byte[] digest(byte[] toBeDigested) throws NoSuchAlgorithmException {
+        MessageDigest messageDigest = MessageDigest.getInstance(SHA_256);
+        messageDigest.update(toBeDigested);
+        return messageDigest.digest();
     }
 }
