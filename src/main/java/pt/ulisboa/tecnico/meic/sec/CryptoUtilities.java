@@ -63,7 +63,7 @@ public class CryptoUtilities {
      * @return Key
      * @throws IOException
      */
-    private static Key readAESKey(String keyPath) throws IOException {
+    public static Key readAESKey(String keyPath) throws IOException {
         byte[] encoded;
         try(FileInputStream fis = new FileInputStream(keyPath)) {
             encoded = new byte[fis.available()];
@@ -78,11 +78,11 @@ public class CryptoUtilities {
     /**
      * Writes the Symmetric Key in the keyPath.
      * @param keyPath
-     * @param symmetricKey
+     * @param aesKey
      * @throws IOException
      */
-    public static void writeAESKey(String keyPath, Key symmetricKey) throws IOException {
-        byte[] encoded = symmetricKey.getEncoded();
+    public static void writeAESKey(String keyPath, Key aesKey) throws IOException {
+        byte[] encoded = aesKey.getEncoded();
         try(FileOutputStream fos = new FileOutputStream(keyPath)) {
             fos.write(encoded);
         }catch (IOException e){
