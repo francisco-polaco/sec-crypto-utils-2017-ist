@@ -49,12 +49,12 @@ public class CryptoManager {
     }
 
     /**
-     * It gets a nounce, not much to explain.
+     * It gets a nonce, not much to explain.
      * @param bytes
      * @return
      * @throws NoSuchAlgorithmException
      */
-    public byte[] generateNounce(int bytes) throws NoSuchAlgorithmException {
+    public byte[] generateNonce(int bytes) throws NoSuchAlgorithmException {
         return getSecureRandomNumber(bytes);
     }
 
@@ -65,6 +65,33 @@ public class CryptoManager {
     public Timestamp getActualTimestamp(){
         GregorianCalendar rightNow = new GregorianCalendar();
         return new Timestamp(rightNow.getTimeInMillis());
+    }
+
+    /**
+     * It will check if the Timestamp is fresh (if it was created within TIME_INTERVAL_VALID_REQUEST_MS
+     * from the actual time) and if the pair Timestamp,Nonce was already seen.
+     * @param date
+     * @param nonce
+     * @return boolean true if its valid, false if it isn't
+     */
+    public boolean isTimestampAndNonceValid(Timestamp date, byte[] nonce) {
+        String nonceStr = new String(nonce);
+        Timestamp actualTime = getActualTimestamp();
+
+        long actualTimeMs = actualTime.getTime();
+        long msgTimeMs = date.getTime();
+
+        if(Math.abs(actualTimeMs - msgTimeMs) < TIME_INTERVAL_VALID_REQUEST_MS) {
+            if (oldTimestamps.size() != 0) {
+                if (oldTimestamps.contains(date.toString() + nonceStr)) {
+                    return false;
+                }
+            }
+            oldTimestamps.add(date.toString() + nonceStr);
+        }else {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -129,7 +156,7 @@ public class CryptoManager {
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    public static boolean verifyDigitalSignature(byte[] signedDigest, byte[] bytesToBeVerified, PublicKey publicKey)
+    public boolean verifyDigitalSignature(byte[] signedDigest, byte[] bytesToBeVerified, PublicKey publicKey)
             throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         // verify the signature with the public key
         Signature sig = Signature.getInstance(SIGNATURE_WITH_DIGEST_ALGORITHM);
@@ -193,32 +220,6 @@ public class CryptoManager {
         } else {
             throw new InvalidAESKeySizeException(bits);
         }
-    }
-
-    /**
-     * It will check if the Timestamp is fresh (if it was created within TIME_INTERVAL_VALID_REQUEST_MS
-     * from the actual time) and if the pair Timestamp,Nounce was already seen.
-     * @param date
-     * @param nonce
-     * @return boolean true if its valid, false if it isn't
-     */
-    public boolean isTimestampAndNonceValid(Timestamp date, String nonce) {
-        Timestamp actualTime = getActualTimestamp();
-
-        long actualTimeMs = actualTime.getTime();
-        long msgTimeMs = date.getTime();
-
-        if(Math.abs(actualTimeMs - msgTimeMs) < TIME_INTERVAL_VALID_REQUEST_MS) {
-            if (oldTimestamps.size() != 0) {
-                if (oldTimestamps.contains(date.toString() + nonce)) {
-                    return false;
-                }
-            }
-            oldTimestamps.add(date.toString() + nonce);
-        }else {
-            return false;
-        }
-        return true;
     }
 
 }

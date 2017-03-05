@@ -24,8 +24,22 @@ CryptoManager cryptoManager = new CryptoManager();
 After instantiate, you can call all the methods shown below on the object.<br>
 Also, some utility functions are available statically at CryptoUtilities class.
 
-## Reference
+## Reference Manual
 ### CryptoManager Class
+
+| Method     | What it does | Parameters | Returns|
+| ------------- |---------------------|------|--------|
+| generateNounce | Generates a Nounce with the size given | (int bytes) | byte[] |
+| getActualTimestamp | Returns the Actual Time Timestamp  | (void) | java.sql.Timestamp |
+| isTimestampAndNonceValid | Checks if the Timestamp is fresh and if the pair Timestamp, Nonce was already seen.  | (Timestamp date, byte[] nounce) | boolean |
+| convertBinaryToBase64 | Binary -> Base64  | (byte[] data) | String |
+| convertBase64ToBinary | Base64 -> Binary  | (String data) | byte[] |
+| digest | SHA-2(toBeDigested) | (byte[] toBeDigested) | byte[] |
+| makeDigitalSignature | Signature(SHA-2(toBeDigested)) | (byte[] bytesToSign, KeyPair keyPair) | byte[] |
+| verifyDigitalSignature | Checks if the signature is valid. | (byte[] signedDigest, byte[] bytesToBeVerified, PublicKey publicKey) | boolean |
+| runAES | Encrypts/Decrypts using AES-CBC Algorithm | (byte[] bytesToEncrypt, Key aesKey, byte[] iv) | byte[] |
+| generateIV | Generates a Secure Random IV | (int bytes) | byte[] |
+| generateAESKey | Generates an AES Key | (int bits) | Key |
 
 
 ### CryptoUtilities Class
