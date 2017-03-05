@@ -1,6 +1,6 @@
 # Java-Crypto-Utils
 
-Well some families asked for some good functions to use Java Crypto in their project.
+Well some families asked for a good API to use Java Crypto in their project.
 And in record time, we delivered.
 
 ## Compilation and Installation
@@ -24,7 +24,7 @@ CryptoManager cryptoManager = new CryptoManager();
 After instantiate, you can call all the methods shown below on the object.<br>
 Also, some utility functions are available statically at CryptoUtilities class.
 
-## Reference Manual
+## API Reference
 ### CryptoManager Class
 
 | Method     | What it does | Parameters | Returns|
