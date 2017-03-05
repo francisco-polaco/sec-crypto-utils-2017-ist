@@ -1,7 +1,7 @@
 # Java-Crypto-Utils
 
 Well some families asked for a good API to use Java Crypto in their project.
-And in record time, we delivered.
+In record time, we delivered.
 
 ## Compilation and Installation
 The easy way to do this is by using maven and simply running the below command.
