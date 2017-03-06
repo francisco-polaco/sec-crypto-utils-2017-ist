@@ -22,6 +22,7 @@ You only need to instantiate an object of the class CryptoManager.
 CryptoManager cryptoManager = new CryptoManager();
 ``` 
 After instantiate, you can call all the methods shown below on the object.<br>
+A complete demonstration can be found in the [Application class](https://github.com/francisco-polaco/crypto-utils/blob/master/src/main/java/pt/ulisboa/tecnico/meic/sec/Application.java).<br>
 Also, some utility functions are available statically at CryptoUtilities class.
 
 ## API Reference
@@ -37,10 +38,11 @@ Also, some utility functions are available statically at CryptoUtilities class.
 | digest | SHA-2(toBeDigested) | (byte[] toBeDigested) | byte[] |
 | makeDigitalSignature | Signature(SHA-2(toBeDigested)) | (byte[] bytesToSign, KeyPair keyPair) | byte[] |
 | verifyDigitalSignature | Checks if the signature is valid. | (byte[] signedDigest, byte[] bytesToBeVerified, PublicKey publicKey) | boolean |
-| runAES | Encrypts/Decrypts using AES-CBC Algorithm | (byte[] bytesToEncrypt, Key aesKey, byte[] iv) | byte[] |
+| runAES | Encrypts/Decrypts using AES-CBC Algorithm | (byte[] bytesToEncrypt, Key aesKey, byte[] iv, int mode)* | byte[] |
 | generateIV | Generates a Secure Random IV | (int bytes) | byte[] |
 | generateAESKey | Generates an AES Key | (int bits) | Key |
 
+*mode can be Cipher.ENCRYPT_MODE to encrypt, or Cipher.DECRYPT_MODE to decrypt
 
 ### CryptoUtilities Class
 Note that all methods below are static.
