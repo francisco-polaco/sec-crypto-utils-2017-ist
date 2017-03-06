@@ -1,7 +1,7 @@
 # Java-Crypto-Utils
 
 Well some families asked for a good API to use Java Crypto in their project.
-And in record time, we delivered.
+In record time, we delivered.
 
 ## Compilation and Installation
 The easy way to do this is by using maven and simply running the below command.
@@ -14,7 +14,7 @@ Now you can edit your project's POM and add the following dependency:
 <artifactId>crypto</artifactId>
 <version>1.0-SNAPSHOT</version>
 ```
-You are now ready to call some of the best methods out there :D
+You are now ready to use one of the best API out there :smile:
 
 ## Usage
 You only need to instantiate an object of the class CryptoManager.
