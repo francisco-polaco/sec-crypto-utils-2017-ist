@@ -177,6 +177,7 @@ public class CryptoManager {
      * @param bytesToEncrypt
      * @param aesKey
      * @param iv
+     * @param mode - Cipher.ENCRYPT_MODE to encrypt; Cipher.DECRYPT_MODE to decrypt
      * @return byte[]
      * @throws NoSuchAlgorithmException
      * @throws NoSuchPaddingException
@@ -185,16 +186,17 @@ public class CryptoManager {
      * @throws BadPaddingException
      * @throws IllegalBlockSizeException
      */
-    public byte[] runAES(byte[] bytesToEncrypt, Key aesKey, byte[] iv)
+    public byte[] runAES(byte[] bytesToEncrypt, Key aesKey, byte[] iv, int mode)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         // get a AES cipher object and print the provider
         Cipher cipher = Cipher.getInstance(AES_CBC_PKCS5_PADDING);
 
         IvParameterSpec ips = new IvParameterSpec(iv);
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey, ips);
+        cipher.init(mode, aesKey, ips);
         return cipher.doFinal(bytesToEncrypt);
     }
+
 
     /**
      * Returns an IV using secure random
