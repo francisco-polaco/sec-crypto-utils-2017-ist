@@ -22,8 +22,9 @@ You only need to instantiate an object of the class CryptoManager.
 CryptoManager cryptoManager = new CryptoManager();
 ``` 
 After instantiate, you can call all the methods shown below on the object.<br>
-A complete demonstration can be found in the [Application class](https://github.com/francisco-polaco/crypto-utils/blob/master/src/main/java/pt/ulisboa/tecnico/meic/sec/Application.java).<br>
 Also, some utility functions are available statically at CryptoUtilities class.
+### Demo
+A complete demonstration can be found in the [Application class](https://github.com/francisco-polaco/crypto-utils/blob/master/src/main/java/pt/ulisboa/tecnico/meic/sec/Application.java).<br>
 
 ## API Reference
 ### CryptoManager Class
