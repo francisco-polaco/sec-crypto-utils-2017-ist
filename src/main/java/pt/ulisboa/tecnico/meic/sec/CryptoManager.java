@@ -127,6 +127,16 @@ public class CryptoManager {
     }
 
     /**
+     * It digests the public key using sha-2 and return its result.
+     * @param publicKey
+     * @return byte[] with SHA-2 of publicKey
+     * @throws NoSuchAlgorithmException
+     */
+    public byte[] getPublicKeyFingerprint(PublicKey publicKey) throws NoSuchAlgorithmException {
+        return digest(publicKey.getEncoded());
+    }
+
+    /**
      * It digests the message and signs that digest with senders private key.
      * This method does everything, so you don't need to use digest method before.
      * @param bytesToSign

@@ -37,6 +37,7 @@ A complete demonstration can be found in the [Application class](https://github.
 | convertBinaryToBase64 | Binary -> Base64  | (byte[] data) | String |
 | convertBase64ToBinary | Base64 -> Binary  | (String data) | byte[] |
 | digest | SHA-2(toBeDigested) | (byte[] toBeDigested) | byte[] |
+| getPublicKeyFingerprint | SHA-2(publicKey) | (PublicKey publicKey) | byte[] |
 | makeDigitalSignature | Signature(SHA-2(toBeDigested)) | (byte[] bytesToSign, KeyPair keyPair) | byte[] |
 | verifyDigitalSignature | Checks if the signature is valid. | (byte[] signedDigest, byte[] bytesToBeVerified, PublicKey publicKey) | boolean |
 | runAES | Encrypts/Decrypts using AES-CBC Algorithm | (byte[] bytesToEncrypt, Key aesKey, byte[] iv, int mode)* | byte[] |
