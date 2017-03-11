@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.cert.*;
 
 /**
  * Created by francisco on 04/03/2017.
@@ -36,7 +36,23 @@ public class CryptoUtilities {
      */
     public static PublicKey getPublicKeyFromKeystore(KeyStore keystore, String keyAlias, char[] keyPassword)
             throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
-        return (PublicKey) keystore.getKey(keyAlias, keyPassword);
+        final java.security.cert.Certificate cert = keystore.getCertificate(keyAlias);
+        final PublicKey publicKey = cert.getPublicKey();
+        return publicKey;
+    }
+
+    /**
+     * @param keystore
+     * @param keyAlias
+     * @param keyPassword
+     * @return
+     * @throws UnrecoverableKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
+    public static Key getAESKeyFromKeystore(KeyStore keystore, String keyAlias, char[] keyPassword)
+            throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
+        return (Key) keystore.getKey(keyAlias, keyPassword);
     }
 
     /**
@@ -52,7 +68,7 @@ public class CryptoUtilities {
     public static KeyStore readKeystoreFile(String keyStoreFilePath, char[] keyStorePassword)
             throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException {
         FileInputStream fis = new FileInputStream(keyStoreFilePath);
-        KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+        KeyStore keystore = KeyStore.getInstance("JCEKS");
         keystore.load(fis, keyStorePassword);
         return keystore;
     }
