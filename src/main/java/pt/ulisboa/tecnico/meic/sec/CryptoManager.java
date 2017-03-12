@@ -146,11 +146,11 @@ public class CryptoManager {
      * @throws InvalidKeyException
      * @throws SignatureException
      */
-    public byte[] makeDigitalSignature(byte[] bytesToSign, KeyPair keyPair)
+    public byte[] makeDigitalSignature(byte[] bytesToSign, PrivateKey privateKey)
             throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         // Digest with SHA256 and sign that digest
         Signature sig = Signature.getInstance(SIGNATURE_WITH_DIGEST_ALGORITHM);
-        sig.initSign(keyPair.getPrivate());
+        sig.initSign(privateKey);
         sig.update(bytesToSign);
         return sig.sign();
     }

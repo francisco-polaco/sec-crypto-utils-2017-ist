@@ -54,7 +54,7 @@ public class Application {
         System.out.println();
 
         // Let's sign the message using our KeyPair
-        byte[] digitalSignature = cryptoManager.makeDigitalSignature(message.getBytes(), keyPair);
+        byte[] digitalSignature = cryptoManager.makeDigitalSignature(message.getBytes(), keyPair.getPrivate());
         System.out.println("Signature: \n" + cryptoManager.convertBinaryToBase64(digitalSignature));
         System.out.println();
 
