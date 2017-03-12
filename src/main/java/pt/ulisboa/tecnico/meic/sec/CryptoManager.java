@@ -234,4 +234,25 @@ public class CryptoManager {
         }
     }
 
+
+    public byte[] signFields(String[] fieldsToSend, KeyStore keyStore, String keyAlias, char[] keyPassword) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, UnrecoverableKeyException, KeyStoreException {
+        String toSign = "";
+        for (String aFieldsToSend : fieldsToSend) {
+            toSign += aFieldsToSend;
+        }
+        return makeDigitalSignature(toSign.getBytes(),
+                CryptoUtilities.getPrivateKeyFromKeystore(keyStore, keyAlias, keyPassword));
+    }
+
+    public boolean isValidSig(PublicKey publicKey, String[] fieldsToCheck, String signatureSent) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        String toBeVerified = "";
+        for (String field :
+                fieldsToCheck) {
+            toBeVerified += field;
+        }
+
+        return verifyDigitalSignature(convertBase64ToBinary(signatureSent),
+                toBeVerified.getBytes(),
+                publicKey);
+    }
 }
