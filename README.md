@@ -43,6 +43,8 @@ A complete demonstration can be found in the [Application class](https://github.
 | runAES | Encrypts/Decrypts using AES-CBC Algorithm | (byte[] bytesToEncrypt, Key aesKey, byte[] iv, int mode)* | byte[] |
 | generateIV | Generates a Secure Random IV | (int bytes) | byte[] |
 | generateAESKey | Generates an AES Key | (int bits) | Key |
+| signFields | Signs the concatenated content of the String[] | (String[] fieldsToSign, KeyStore keyStore, String keyAlias, char[] keyPassword) | byte[] |
+| isValidSig | Checks if the concatenation of the String[] is properly authenticated | (PublicKey publicKey, String[] fieldsToCheck, String signatureSent) | boolean |
 
 *mode can be Cipher.ENCRYPT_MODE to encrypt, or Cipher.DECRYPT_MODE to decrypt
 

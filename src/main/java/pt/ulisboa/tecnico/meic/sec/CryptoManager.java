@@ -235,15 +235,38 @@ public class CryptoManager {
     }
 
 
-    public byte[] signFields(String[] fieldsToSend, KeyStore keyStore, String keyAlias, char[] keyPassword) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, UnrecoverableKeyException, KeyStoreException {
+    /**
+     * Signs the concatenated content of fieldsToSign
+     * @param fieldsToSign
+     * @param keyStore
+     * @param keyAlias
+     * @param keyPassword
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     * @throws UnrecoverableKeyException
+     * @throws KeyStoreException
+     */
+    public byte[] signFields(String[] fieldsToSign, KeyStore keyStore, String keyAlias, char[] keyPassword) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, UnrecoverableKeyException, KeyStoreException {
         String toSign = "";
-        for (String aFieldsToSend : fieldsToSend) {
+        for (String aFieldsToSend : fieldsToSign) {
             toSign += aFieldsToSend;
         }
         return makeDigitalSignature(toSign.getBytes(),
                 CryptoUtilities.getPrivateKeyFromKeystore(keyStore, keyAlias, keyPassword));
     }
 
+    /**
+     * Checks if the concatenation of fieldsToCheck is properly authenticated
+     * @param publicKey
+     * @param fieldsToCheck
+     * @param signatureSent
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     */
     public boolean isValidSig(PublicKey publicKey, String[] fieldsToCheck, String signatureSent) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
         String toBeVerified = "";
         for (String field :
