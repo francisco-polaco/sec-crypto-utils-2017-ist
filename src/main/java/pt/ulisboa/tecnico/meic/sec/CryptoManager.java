@@ -140,7 +140,7 @@ public class CryptoManager {
      * It digests the message and signs that digest with senders private key.
      * This method does everything, so you don't need to use digest method before.
      * @param bytesToSign
-     * @param keyPair
+     * @param privateKey
      * @return
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeyException
@@ -207,7 +207,6 @@ public class CryptoManager {
         return cipher.doFinal(bytesToEncrypt);
     }
 
-
     /**
      * Returns an IV using secure random
      * @param bytes
@@ -233,7 +232,6 @@ public class CryptoManager {
             throw new InvalidAESKeySizeException(bits);
         }
     }
-
 
     /**
      * Signs the concatenated content of fieldsToSign
