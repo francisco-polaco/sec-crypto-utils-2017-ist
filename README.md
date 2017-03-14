@@ -12,7 +12,7 @@ Now you can edit your project's POM and add the following dependency:
 ``` 
 <groupId>pt.ulisboa.tecnico.meic.sec</groupId>
 <artifactId>crypto</artifactId>
-<version>1.0-SNAPSHOT</version>
+<version>1.1</version>
 ```
 You are now ready to use one of the best API out there :smile:
 
