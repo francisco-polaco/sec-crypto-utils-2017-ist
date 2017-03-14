@@ -9,6 +9,10 @@ import java.security.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
@@ -23,11 +27,12 @@ public class CryptoManager {
     private static final String SIGNATURE_WITH_DIGEST_ALGORITHM = "SHA256WithRSA";
     private static final String AES_CBC_PKCS5_PADDING = "AES/CBC/PKCS5Padding";
     private static final long TIME_INTERVAL_VALID_REQUEST_MS = 60 * 1000; // 1 MINUTE
+    private static final int BOUND_TIME_TO_CLEAR_NOUNCE_LIST_MS = 5 * 60 * 1000; // 1 Minute
 
-    private ArrayList<String> oldTimestamps;
+    private CopyOnWriteArrayList<String> oldTimestamps;
 
     public CryptoManager() {
-        this.oldTimestamps = new ArrayList<String>();
+        this.oldTimestamps = new CopyOnWriteArrayList<>();
     }
 
     /**
@@ -87,6 +92,8 @@ public class CryptoManager {
                     return false;
                 }
             }
+            else
+                new ClearTableTask(); // Start running the array cleaner
             oldTimestamps.add(date.toString() + nonceStr);
         }else {
             return false;
@@ -275,5 +282,18 @@ public class CryptoManager {
         return verifyDigitalSignature(convertBase64ToBinary(signatureSent),
                 toBeVerified.getBytes(),
                 publicKey);
+    }
+
+    private class ClearTableTask extends TimerTask {
+
+        public ClearTableTask() {
+            new Timer().schedule(this, ThreadLocalRandom.current().nextInt(BOUND_TIME_TO_CLEAR_NOUNCE_LIST_MS) + 1000);
+        }
+
+        @Override
+        public void run() {
+            oldTimestamps.clear();
+            new ClearTableTask();
+        }
     }
 }
