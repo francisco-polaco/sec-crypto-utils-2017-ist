@@ -263,6 +263,25 @@ public class CryptoManager {
     }
 
     /**
+     * Signs the concatenated content of fieldsToSign
+     * @param fieldsToSign
+     * @param privateKey
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeyException
+     * @throws SignatureException
+     * @throws UnrecoverableKeyException
+     * @throws KeyStoreException
+     */
+    public byte[] signFields(String[] fieldsToSign, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        String toSign = "";
+        for (String aFieldsToSend : fieldsToSign) {
+            toSign += aFieldsToSend;
+        }
+        return makeDigitalSignature(toSign.getBytes(), privateKey);
+    }
+
+    /**
      * Checks if the concatenation of fieldsToCheck is properly authenticated
      * @param publicKey
      * @param fieldsToCheck
