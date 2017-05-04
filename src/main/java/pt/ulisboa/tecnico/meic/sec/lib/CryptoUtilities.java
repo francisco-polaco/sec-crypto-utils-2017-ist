@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.meic.sec;
+package pt.ulisboa.tecnico.meic.sec.lib;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.security.*;
 import java.security.cert.*;
 
-/**
- * Created by francisco on 04/03/2017.
- */
 public class CryptoUtilities {
     /**
      * @param keystore

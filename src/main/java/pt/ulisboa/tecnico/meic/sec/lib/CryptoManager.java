@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.meic.sec;
+package pt.ulisboa.tecnico.meic.sec.lib;
 
 import pt.ulisboa.tecnico.meic.sec.exception.InvalidAESKeySizeException;
 import pt.ulisboa.tecnico.meic.sec.exception.NotEnoughNumberOfBytesException;
@@ -7,7 +7,6 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import java.security.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -17,9 +16,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import static javax.xml.bind.DatatypeConverter.parseBase64Binary;
 import static javax.xml.bind.DatatypeConverter.printBase64Binary;
 
-/**
- * Created by francisco on 04/03/2017.
- */
 public class CryptoManager {
 
     private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";

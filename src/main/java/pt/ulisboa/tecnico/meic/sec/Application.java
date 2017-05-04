@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.meic.sec;
 
+import pt.ulisboa.tecnico.meic.sec.lib.CryptoManager;
+
 import javax.crypto.Cipher;
 import java.security.Key;
 import java.security.KeyPair;
@@ -9,9 +11,6 @@ import java.util.Scanner;
 
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
-/**
- * Created by francisco on 04/03/2017.
- */
 public class Application {
 
     private static final String DELIMITER_STRING = "$DeLiM$";
