@@ -1,4 +1,4 @@
-# Java-Crypto-Utils
+# Password-Manager-Utils
 
 Well some families asked for a good API to use Java Crypto in their project.
 In record time, we delivered.
@@ -11,8 +11,8 @@ mvn install
 Now you can edit your project's POM and add the following dependency:
 ``` 
 <groupId>pt.ulisboa.tecnico.meic.sec</groupId>
-<artifactId>crypto</artifactId>
-<version>1.1</version>
+<artifactId>utils</artifactId>
+<version>2.0</version>
 ```
 You are now ready to use one of the best API out there :smile:
 
